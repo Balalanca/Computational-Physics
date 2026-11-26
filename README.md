@@ -2,117 +2,71 @@
 
 [![Tests](https://github.com/Balalanca/Computational-Physics/actions/workflows/tests.yml/badge.svg)](https://github.com/Balalanca/Computational-Physics/actions)
 
-Numerical investigations of statistical mechanics, collective behaviour, phase transitions, nonlinear dynamics and associative memory.
+Numerical investigations of equilibrium and non-equilibrium statistical mechanics, critical phenomena, nonlinear dynamics, and associative memory.
 
-## Overview
+## Statistical mechanics
 
-This project explores how macroscopic phenomena emerge from microscopic interactions and how numerical methods can reveal the statistical properties of complex systems.
+The ferromagnetic Ising Hamiltonian is
 
-The models span equilibrium statistical mechanics, disordered systems, critical phenomena, deterministic chaos and neural dynamics.
+$$H=-J\sum_{\langle i,j\rangle}s_i s_j-h\sum_i s_i.$$
 
-## 1. Ising Model
+Metropolis updates, incremental energy measurements, periodic spin clusters and temperature sweeps are used to investigate the approach to equilibrium. At zero field the infinite square lattice has critical temperature $T_c/J=2/\log(1+\sqrt{2})$ in units with $k_B=1$. The numerical results are compared against the exact spontaneous magnetization curve. Finite chains and finite lattices limit equilibration near criticality.
 
-The Ising model describes interacting binary spins through the Hamiltonian
+![Magnetization](results/extended/magnetization.png)
+![Energy evolution](results/extended/energy_evolution.png)
+![Cluster statistics](results/extended/ising_clusters.png)
 
-$$
-H=-J\sum_{\langle i,j\rangle}s_i s_j-h\sum_i s_i,
-\qquad s_i\in\{-1,+1\}.
-$$
+Temperature quenches examine domain coarsening through cluster area, its square root as a linear-size proxy, and domain-wall bond counts. The latter are related to excess energy through $E-E_0=2J N_{\rm wall}$ for zero field. These proxies are not exact correlation lengths, and thermal excitations contribute to the wall count. The Schelling model investigates segregation through local satisfaction thresholds and vacancy-conserving relocation.
 
-The numerical implementation investigates collective spin behaviour using periodic boundary conditions and Monte Carlo dynamics.
+![Quench](results/extended/quench_snapshots.png)
+![Coarsening](results/extended/coarsening.png)
+![Segregation](results/extended/segregation.png)
 
-![Ising model](results/ising.png)
+## Percolation and critical phenomena
 
-The project also explores spatial segregation through the Schelling model, illustrating how local interaction rules can produce large-scale spatial organization.
+Site and bond percolation on square lattices have thresholds near 0.59274 and exactly 0.5, respectively. Cluster-size histograms are compared with the reference exponent $\tau=187/91$. The order parameter, defined here as largest-cluster area divided by lattice area, is studied with $\beta=5/36$ and finite-size exponent $\nu=4/3$.
 
-## 2. Percolation Theory
+$$P(p,L)=L^{-\beta/\nu}F((p-p_c)L^{1/\nu}).$$
 
-Percolation investigates the emergence of connected structures in randomly occupied systems.
+![Finite-size analysis](results/extended/finite_size_scaling.png)
+![Cluster configurations](results/extended/cluster_configurations.png)
+![Order parameter](results/extended/supercritical_order.png)
 
-Both site and bond percolation are considered, with numerical analysis of connectivity and spanning behaviour under open boundary conditions.
+Box counting estimates the largest-cluster fractal dimension against the theoretical value $91/48$. The synthetic population-density field illustrates thresholded urban clustering without claiming to represent an actual geographical region. A compatible geographical grid can be analysed with the same methods.
 
-![Percolation](results/percolation.png)
+![Fractal geometry](results/extended/fractal_cluster.png)
+![Synthetic urban field](results/extended/urban_synthetic.png)
+![Synthetic urban cluster distributions](results/extended/urban_synthetic_clusters.png)
 
-The simulations illustrate the relationship between occupation probability, connectivity and critical phenomena.
+## Disordered systems and avalanches
 
-## 3. Random-Field Ising Model and Avalanches
+The random-field Ising model evolves at zero temperature under a quasistatically increasing external field. Brute-force and sorted-list triggering methods are compared on matched disorder realizations. Spatial event labels, magnetization, size distributions and timings are recorded. Agreement of fields and sizes is checked automatically.
 
-The random-field Ising model introduces spatial disorder through local random fields:
+![Avalanche maps](results/extended/avalanche_maps.png)
 
-$$
-H=-J\sum_{\langle i,j\rangle}s_i s_j
--\sum_i(H_{\mathrm{ext}}+h_i)s_i.
-$$
+## Nonlinear dynamics
 
-Under changes in the external field, interacting spins can undergo collective rearrangements known as avalanches.
+The logistic map $x_{n+1}=4\mu x_n(1-x_n)$ is explored through trajectories, bifurcations, nearby-orbit separation, Lyapunov exponents, and information and capacity dimensions near the Feigenbaum point. At $\mu=1$, the invariant density is $\rho(x)=1/(\pi\sqrt{x(1-x)})$. Critical-point iterates reveal boundaries in the chaotic attractor.
 
-The numerical experiments investigate avalanche behaviour in disordered interacting systems.
+![Lyapunov separation](results/extended/lyapunov_separation.png)
+![Fractal dimensions](results/extended/attractor_dimensions.png)
+![Invariant measures](results/extended/invariant_measures.png)
+![Critical boundaries](results/extended/critical_boundaries.png)
 
-![Avalanche dynamics](results/avalanches.png)
+## Associative memory
 
-## 4. Nonlinear Dynamics and Chaos
+Classical Hopfield dynamics use symmetric zero-diagonal Hebbian weights and a deterministic tie rule. Asynchronous and synchronous updates, cosine overlaps, energy histories, partial inputs, negative and mixed states, noisy retrieval and fixed-point capacity are investigated. Modern associative memory uses softmax-weighted continuous retrieval and the corresponding energy landscape.
 
-The logistic map is defined by
+![Retrieval](results/extended/memory_retrieval.png)
+![Capacity and temperature](results/extended/memory_capacity_temperature.png)
+![Digit retrieval](results/extended/digit_memory.png)
+![Noise sweep](results/extended/digit_noise_sweep.png)
 
-$$
-x_{n+1}=rx_n(1-x_n).
-$$
-
-Despite its simple deterministic structure, the system exhibits transitions between stable and chaotic behaviour.
-
-Numerical experiments explore the evolution of the system as its control parameter varies.
-
-![Logistic map](results/chaos.png)
-
-## 5. Hopfield Networks
-
-Classical Hopfield networks describe associative memory through interacting binary states.
-
-The energy function is
-
-$$
-E=-\frac{1}{2}\sum_{i,j}w_{ij}s_i s_j.
-$$
-
-The implementation investigates memory retrieval using a zero-diagonal weight matrix and deterministic tie handling.
-
-A continuous softmax-based retrieval model is also included to explore modern associative memory mechanisms.
-
-![Hopfield memory retrieval](results/hopfield.png)
-
-## Numerical Methodology
-
-- Monte Carlo methods
-- Discrete lattice simulations
-- Periodic and open boundary conditions
-- Seeded stochastic experiments
-- Controlled parameter sweeps
-- Matched disorder realizations
-- Statistical and numerical analysis
-- Automated model validation
-
-Finite-size simulations are used to investigate qualitative physical behaviour rather than establish high-precision universal critical exponents.
-
-## Repository Structure
-
-| Module | Description |
-|---|---|
-| `ising.py` | Interacting spin systems |
-| `percolation.py` | Site and bond percolation |
-| `avalanches.py` | Disordered spin systems and avalanches |
-| `chaos.py` | Nonlinear dynamical systems |
-| `hopfield.py` | Associative memory models |
-| `experiment.py` | Numerical experiments and visualization |
-| `test_models.py` | Automated model tests |
-
-## Reproducibility
+## Reproduce
 
     pip install -r requirements.txt
     python -m pytest -q
-    python experiment.py
+    python restored_experiments.py --quick
+    python additional_experiments.py
 
-Generated figures are saved in `results/`.
-
-## Technologies
-
-Python, NumPy, SciPy, Matplotlib, statistical mechanics, numerical simulation and nonlinear dynamics.
+Remove `--quick` for larger lattices and longer trajectories. `--study` selects a single investigation. Provide `--urban-grid path/to/grid.txt` for a real spatial density matrix (negative entries mark excluded cells). The included extended results use the quick configuration plus the additional experiments; these are finite-size exploratory estimates, not precision measurements of universal exponents. Numerical tables are in `results/extended/`. Timing results depend on the machine. The `experiment.py` runner provides a compact baseline experiment.

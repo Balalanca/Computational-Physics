@@ -21,3 +21,44 @@ def urban_scan(grid,thresholds):
     for x in t:
         a=sizes(label(land&(grid>x))[0]);fractions.append(a.max()/land.sum() if len(a) else 0.)
     f=np.array(fractions);return f,-np.diff(f)/np.diff(t)
+
+
+def bond_labels(n,p,rng):
+    """Label connected components, including isolated sites."""
+    g=nx.grid_2d_graph(n,n)
+    g.remove_edges_from([e for e in g.edges if rng.random()>=p])
+    out=np.zeros((n,n),int)
+    for k,c in enumerate(nx.connected_components(g),1):
+        for i,j in c:out[i,j]=k
+    return out
+
+
+def cluster_density(a,bins=30):
+    a=np.asarray(a);a=a[a>0]
+    if not len(a):return np.array([]),np.array([])
+    edges=np.geomspace(1,max(2,a.max()+1),bins+1)
+    h,e=np.histogram(a,edges);valid=h>0
+    return np.sqrt(e[:-1]*e[1:])[valid],(h/(len(a)*np.diff(e)))[valid]
+
+
+def order_curve(model,n,probabilities,rng,repeats=15):
+    out=[]
+    for p in probabilities:
+        x=np.array([largest_fraction(model(n,p,rng)) for _ in range(repeats)])
+        out.append([p,x.mean(),x.std(ddof=1)/np.sqrt(repeats)])
+    return np.array(out)
+
+
+def spanning(labels):
+    def common(a,b):return bool((set(a)&set(b))-{0})
+    return common(labels[0],labels[-1]),common(labels[:,0],labels[:,-1])
+
+
+def urban_statistics(grid,thresholds):
+    land=np.isfinite(grid)&(grid>=0)
+    if not land.any():raise ValueError('no land')
+    rows=[]
+    for threshold in thresholds:
+        mask=land&(grid>threshold);labels,_=label(mask);a=sizes(labels);v,h=spanning(labels)
+        rows.append([threshold,mask.sum()/land.sum(),len(a),a.max()/land.sum() if len(a) else 0,a.mean() if len(a) else 0,v,h])
+    return np.array(rows)

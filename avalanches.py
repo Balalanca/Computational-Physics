@@ -2,10 +2,11 @@ import numpy as np
 from collections import deque
 from time import perf_counter
 
-def simulate(h,method='sorted',J=1.):
+def simulate(h,method='sorted',J=1.,return_map=False):
     if method not in ('sorted','brute') or J<0:raise ValueError('invalid method/coupling')
     h=np.asarray(h,float);n,m=h.shape;s=-np.ones(h.shape,int);up=np.zeros(h.shape,int);events=[];fields=[];remaining=s.size
     def neighbors(i,j):return [((i-1)%n,j),((i+1)%n,j),(i,(j-1)%m),(i,(j+1)%m)]
+    labels=np.zeros(h.shape,int)
     order=np.argsort(h.ravel())[::-1] if method=='sorted' else None;ptr=np.zeros(5,int)
     while remaining:
         if method=='brute':
@@ -23,12 +24,12 @@ def simulate(h,method='sorted',J=1.):
         while q:
             a,b=q.popleft()
             if s[a,b]>0:continue
-            s[a,b]=1;count+=1;remaining-=1
+            s[a,b]=1;labels[a,b]=len(events)+1;count+=1;remaining-=1
             for x,y in neighbors(a,b):
                 up[x,y]+=1
                 if s[x,y]<0 and J*(2*up[x,y]-4)+h[x,y]+H>=-1e-12:q.append((x,y))
         events.append(count);fields.append(H)
-    return np.array(fields),np.array(events)
+    return (np.array(fields),np.array(events),labels) if return_map else (np.array(fields),np.array(events))
 
 def benchmark(h):
     result={}
