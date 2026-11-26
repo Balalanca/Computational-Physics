@@ -1,0 +1,7 @@
+Fractal dimension 1.7505736647137267
+Bond largest component 1233
+Matched benchmark 0.7 {'brute': 0.02030387900003916, 'sorted': 0.12024165999991965}
+Matched benchmark 0.9 {'brute': 0.02066031699996529, 'sorted': 0.12184582999998383}
+Matched benchmark 1.4 {'brute': 0.027711438000096678, 'sorted': 0.13372364499991818}
+Lyapunov at mu=1 0.6930893190673109
+Classical retrieval overlap 1.0 modern overlap 1.0
